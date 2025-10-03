@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Have a Nice Trip</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 使用 Inter 字體 -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #4338CA;
+      /* Indigo 700 */
+      --color-secondary: #F59E0B;
+      /* Amber 500 */
+      --color-background: #F9FAFB;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--color-background);
+    }
+
+    /* Header Gradient */
+    .header-gradient {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #3B82F6 100%);
+    }
+
+    /* Navigation Active State (確保白色文字在深藍色背景上) */
+    .nav-active {
+      background-color: var(--color-primary);
+      box-shadow: 0 4px 15px rgba(67, 56, 202, 0.4);
+      font-weight: 600;
+    }
+
+    /* 1. Header 滾動縮減過渡效果 */
+    #main-header,
+    #main-header h1,
+    #main-header p {
+      transition: all 0.3s ease-in-out;
+    }
+
+    #sub-title.hidden {
+      opacity: 0;
+      visibility: hidden;
+      height: 0;
+    }
+
+    /* 隱藏滾動條 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Card Hover Effect */
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.04);
+      border-color: #C7D2FE;
+    }
+
+    /* Timeline Styling */
+    .timeline {
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #E0E7FF;
+      z-index: 0;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 45px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 11px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border: 4px solid var(--color-primary);
+      border-radius: 50%;
+      top: 6px;
+      z-index: 1;
+    }
+
+    /* Section fade-in animation */
+    .section {
+      display: none;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    /* Daily Content Tab Animation */
+    .daily-content-tab {
+      display: none;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .daily-content-tab.active {
+      display: block;
+    }
+
+    /* Tab button active state (Used to be for buttons, kept for reference but now superseded by select box style) */
+    .daily-tab-active {
+      background-color: var(--color-primary);
+      color: white;
+      box-shadow: 0 4px 6px rgba(67, 56, 202, 0.3);
+      font-weight: 600;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .filter-active {
+      background-color: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    .filter-btn {
+      border: 1px solid #D1D5DB;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header id="main-header" class="header-gradient text-white relative z-50 shadow-xl py-4">
+    <div class="container mx-auto px-4">
+      <!-- 固定較小的字級 -->
+      <h1 id="main-title" class="text-xl sm:text-2xl font-extrabold text-center tracking-tight">
+        ✨ Have a Nice Trip ✨
+      </h1>
+      <!-- 副標題 -->
+      <p id="sub-title" class="text-center text-indigo-100 mt-1 text-sm sm:text-base">
+        2025年10月4日 - 10月11日
+      </p>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav id="main-nav" class="bg-white shadow-lg sticky top-0 z-40">
+    <div class="container mx-auto px-4">
+      <ul class="flex overflow-x-auto justify-start sm:justify-center space-x-2 py-2 sm:py-3 no-scrollbar">
+        <li>
+          <button
+            class="nav-btn nav-active px-4 py-2 rounded-full text-sm sm:text-base text-white transition-all whitespace-nowrap"
+            data-section="overview">🌟 行程總覽</button>
+        </li>
+        <li>
+          <button
+            class="nav-btn px-4 py-2 rounded-full text-sm sm:text-base text-gray-700 transition-all hover:bg-indigo-50 whitespace-nowrap"
+            data-section="transport">🚊 交通住宿</button>
+        </li>
+        <li>
+          <button
+            class="nav-btn px-4 py-2 rounded-full text-sm sm:text-base text-gray-700 transition-all hover:bg-indigo-50 whitespace-nowrap"
+            data-section="daily">🗓️ 每日行程</button>
+        </li>
+        <li>
+          <button
+            class="nav-btn px-4 py-2 rounded-full text-sm sm:text-base text-gray-700 transition-all hover:bg-indigo-50 whitespace-nowrap"
+            data-section="food">🍜 美食地圖</button>
+        </li>
+        <li>
+          <button
+            class="nav-btn px-4 py-2 rounded-full text-sm sm:text-base text-gray-700 transition-all hover:bg-indigo-50 whitespace-nowrap"
+            data-section="preparation">📝 行前準備</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-10">
+    <!-- Overview Section -->
+    <section id="overview" class="section active">
+      <h2 class="text-3xl font-extrabold mb-8 text-center text-gray-800">上海行程總覽</h2>
+
+      <!-- 行程亮點 -->
+      <div class="mb-12 bg-white rounded-2xl shadow-xl p-8 card-hover">
+        <h2 class="text-2xl font-extrabold mb-8 text-indigo-700 text-center">🎯 行程亮點一覽</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div
+            class="text-center p-5 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl shadow-md border-t-4 border-pink-500">
+            <div class="text-4xl mb-3">🏰</div>
+            <h3 class="font-bold text-lg text-gray-800">上海迪士尼樂園</h3>
+            <p class="text-sm text-gray-600 mt-1">夢幻一日，快樂滿分！</p>
+          </div>
+          <div
+            class="text-center p-5 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-md border-t-4 border-indigo-500">
+            <div class="text-4xl mb-3">🎨</div>
+            <h3 class="font-bold text-lg text-gray-800">浦東美術館</h3>
+            <p class="text-sm text-gray-600 mt-1">奧賽藝術的沉浸之旅</p>
+          </div>
+          <div
+            class="text-center p-5 bg-gradient-to-br from-green-50 to-teal-50 rounded-xl shadow-md border-t-4 border-teal-500">
+            <div class="text-4xl mb-3">🌃</div>
+            <h3 class="font-bold text-lg text-gray-800">外灘夜景與魔都</h3>
+            <p class="text-sm text-gray-600 mt-1">經典地標，燈火輝煌</p>
+          </div>
+          <div
+            class="text-center p-5 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-xl shadow-md border-t-4 border-amber-500">
+            <div class="text-4xl mb-3">🏛️</div>
+            <h3 class="font-bold text-lg text-gray-800">朱家角古鎮</h3>
+            <p class="text-sm text-gray-600 mt-1">水鄉古韻，慢步調時光</p>
+          </div>
+        </div>
+      </div>
+      <div class="grid lg:grid-cols-3 gap-8">
+        <!-- 行程統計 Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 lg:col-span-1 card-hover">
+          <h2 class="text-2xl font-extrabold mb-6 text-indigo-700 border-b pb-3 border-indigo-50">📊 行程關鍵數據</h2>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center p-4 bg-indigo-50 rounded-xl border-l-4 border-indigo-500">
+              <span class="font-medium text-gray-700">旅遊天數</span>
+              <span class="font-bold text-xl text-indigo-600">8天</span>
+            </div>
+            <div class="flex justify-between items-center p-4 bg-amber-50 rounded-xl border-l-4 border-amber-500">
+              <span class="font-medium text-gray-700">主要景點</span>
+              <span class="font-bold text-xl text-amber-600">25+個</span>
+            </div>
+            <div class="flex justify-between items-center p-4 bg-purple-50 rounded-xl border-l-4 border-purple-500">
+              <span class="font-medium text-gray-700">推薦餐廳</span>
+              <span class="font-bold text-xl text-purple-600">15家</span>
+            </div>
+            <div class="flex justify-between items-center p-4 bg-emerald-50 rounded-xl border-l-4 border-emerald-500">
+              <span class="font-medium text-gray-700">交通方式</span>
+              <span class="font-bold text-xl text-emerald-600">地鐵+步行</span>
+            </div>
+          </div>
+        </div>
+        <!-- 每日活動分析 Chart Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 lg:col-span-2 card-hover">
+          <h2 class="text-2xl font-extrabold mb-6 text-indigo-700 border-b pb-3 border-gray-100">📈 每日活動強度分析</h2>
+          <!-- 設置圖表容器最大高度 400px，實際高度 350px，確保響應式 -->
+          <div class="max-h-[400px] h-[350px]">
+            <canvas id="dailyChart" class="w-full h-full"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transport Section -->
+    <section id="transport" class="section">
+      <h2 class="text-3xl font-extrabold mb-8 text-center text-gray-800">交通與住宿</h2>
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- 航班資訊 -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+          <h2 class="text-2xl font-extrabold mb-6 text-indigo-700">✈️ 航班資訊</h2>
+          <div class="space-y-8">
+            <div class="border-l-4 border-indigo-500 pl-5 p-3 bg-indigo-50 rounded-lg">
+              <h3 class="font-bold text-xl text-indigo-600 mb-2">去程：台北松山 → 上海虹橋</h3>
+              <div class="text-gray-700 space-y-1 text-sm">
+                <p>📅 <strong>日期：</strong>2025/10/4</p>
+                <p>🛫 <strong>起飛：</strong>12:30 台北松山機場 T1</p>
+                <p>🛬 <strong>到達：</strong>14:15 上海虹橋國際機場 T1</p>
+                <p class="text-xs text-indigo-500 mt-2">請務必提前到達機場，預留安檢時間。</p>
+              </div>
+            </div>
+            <div class="border-l-4 border-amber-500 pl-5 p-3 bg-amber-50 rounded-lg">
+              <h3 class="font-bold text-xl text-amber-600 mb-2">回程：上海虹橋 → 台北松山</h3>
+              <div class="text-gray-700 space-y-1 text-sm">
+                <p>📅 <strong>日期：</strong>2025/10/11</p>
+                <p>🛫 <strong>起飛：</strong>16:15 上海虹橋國際機場 T1</p>
+                <p>🛬 <strong>到達：</strong>18:15 台北松山機場 T1</p>
+                <p class="text-xs text-amber-500 mt-2">回程建議預留更多時間在機場購物或休息。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 交通建議 -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+          <h2 class="text-2xl font-extrabold mb-6 text-indigo-700">🚇 交通與住宿</h2>
+          <div class="space-y-4">
+            <div class="p-4 bg-gray-50 rounded-xl">
+              <h3 class="font-bold text-xl text-indigo-800 flex items-center">
+                <span class="text-xl mr-2">🏨</span> 住宿地點
+              </h3>
+              <p class="text-sm text-gray-700 mt-2">位於7號線匯金路地鐵站附近的崧泽华城-逸泰雅苑2期小區，虹橋機場過來30分鐘，大部分景點1-1.5小時可到達。</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-xl">
+              <h3 class="font-bold text-xl text-indigo-800 flex items-center">
+                <span class="text-xl mr-2">💡</span> 市區移動
+              </h3>
+              <div class="text-sm text-gray-700 mt-2 space-y-1">
+                <p>• 下載<strong>"高德地图"</strong>比較方便，因為Google map在這裡沒有同步信息就不好用</p>
+                <p>• 下載<strong>"Metro大都會"</strong>可以刷碼搭乘地鐵</p>
+                <p>• 下載<strong>"滴滴"</strong>如果需要可以叫計程車</p>
+                <p>• 支付寶裡面搜尋<strong>"上海公交"</strong>領取搭公車的刷卡條碼</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Daily Itinerary Section (改為 Select 下拉選單 UI) -->
+    <section id="daily" class="section">
+      <h2 class="text-3xl font-extrabold mb-8 text-center text-gray-800">每日詳細行程時間軸</h2>
+
+      <!-- Tab Buttons Container (替換為 Select 下拉選單) -->
+      <div class="mb-8 flex justify-center">
+        <label for="daily-select" class="sr-only">選擇日期</label>
+        <select id="daily-select"
+          class="px-5 py-3 rounded-xl shadow-lg border-2 border-indigo-300 bg-white text-lg font-semibold text-indigo-700 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+          <!-- Options will be dynamically inserted here -->
+        </select>
+      </div>
+
+      <!-- Daily Content Container -->
+      <div id="daily-content">
+        <!-- Daily itinerary cards will be dynamically inserted here -->
+      </div>
+    </section>
+
+    <!-- Food Section -->
+    <section id="food" class="section">
+      <h2 class="text-3xl font-extrabold mb-10 text-center text-gray-800">上海美食地圖</h2>
+
+      <!-- 美食篩選器 -->
+      <div class="mb-10 flex flex-wrap justify-center gap-3 sm:gap-4">
+        <button
+          class="filter-btn filter-active px-5 py-2 rounded-full text-sm sm:text-base transition-all hover:bg-indigo-50"
+          data-filter="all">全部</button>
+        <button
+          class="filter-btn px-5 py-2 rounded-full text-sm sm:text-base text-gray-700 transition-all hover:bg-indigo-50"
+          data-filter="shanghai">滬上經典</button>
+        <button
+          class="filter-btn px-5 py-2 rounded-full text-sm sm:text-base text-gray-700 transition-all hover:bg-indigo-50"
+          data-filter="noodles_snacks">麵食小吃</button>
+        <button
+          class="filter-btn px-5 py-2 rounded-full text-sm sm:text-base text-gray-700 transition-all hover:bg-indigo-50"
+          data-filter="hotpot_bbq">火鍋燒烤</button>
+        <button
+          class="filter-btn px-5 py-2 rounded-full text-sm sm:text-base text-gray-700 transition-all hover:bg-indigo-50"
+          data-filter="regional">各地風味</button>
+        <button
+          class="filter-btn px-5 py-2 rounded-full text-sm sm:text-base text-gray-700 transition-all hover:bg-indigo-50"
+          data-filter="dessert">甜點飲品</button>
+      </div>
+
+      <!-- 美食卡片 -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="restaurant-list">
+
+        <!-- 滬上經典 -->
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="shanghai">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">南翔小籠包</h3>
+            <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold">滬上經典</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">正宗小籠包發源地，湯汁多到會爆出來，必嚐！</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=南翔饅頭店" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 查看位置</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="shanghai">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">小楊/大壺春生煎</h3>
+            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">滬上經典</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">「四大金剛」生煎代表：小楊 (湯汁多) / 大壺春 (傳統全發麵)，底部金黃酥脆。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=小楊生煎" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 查看位置</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="shanghai">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">蟹粉小籠包 & 大閘蟹</h3>
+            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">滬上經典</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">秋季限定的極致鮮味！濃郁蟹黃精華灌入小籠包或直接清蒸大閘蟹。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=上海王寶和酒家" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 推薦蟹宴</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="shanghai">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">本幫菜：紅燒肉/草頭</h3>
+            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">滬上經典</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">濃油赤醬的經典！必嚐紅燒肉、燻魚，以及清香爽口的酒香草頭。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=老正興餐廳" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 推薦老正興</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="shanghai">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">鮮肉月餅</h3>
+            <span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-xs font-semibold">滬上經典</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">上海中秋排隊神物！剛出爐酥皮層次分明，內餡鹹香多汁。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=光明邨大酒家" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 推薦光明邨</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="shanghai">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">小龍蝦</h3>
+            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">滬上經典</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">上海夜宵之王，麻辣、蒜蓉、十三香口味，越吃越過癮！</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=上海小龍蝦" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <!-- 麵食小吃 -->
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="noodles_snacks">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">傳統面館 + 炸豬排</h3>
+            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-semibold">麵食小吃</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">老上海的靈魂套餐：一碗澆頭麵（如大腸麵）配一份現炸酥脆的炸豬排。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=滬西老弄堂面馆" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 滬西老弄堂</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="noodles_snacks">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">蟹黃麵</h3>
+            <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-semibold">麵食小吃</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">豪華版拌麵！滿滿的蟹黃和蟹肉淋在彈牙麵條上，極致鮮美。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=蟹尊苑" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 推薦蟹尊苑</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="noodles_snacks">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">螺螄粉</h3>
+            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-semibold">麵食小吃</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">**警告：臭香臭香！** 廣西特色米粉，酸筍的發酵味搭配濃厚湯底，愛的人超愛。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=螺螄粉 上海" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="noodles_snacks">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">麻辣燙</h3>
+            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">麵食小吃</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">可自由選擇蔬菜、肉類、麵條，現煮成一碗麻辣鮮香的街頭小吃。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=麻辣燙 上海" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <!-- 火鍋燒烤 -->
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="hotpot_bbq">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">很久以前羊肉串</h3>
+            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold">火鍋燒烤</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">熱門燒烤店，主打自動烤串機，享受大口吃肉的痛快感！</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=很久以前羊肉串" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 查看位置</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="hotpot_bbq">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">椰子雞</h3>
+            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">火鍋燒烤</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">清甜的椰青水為湯底，煮出海南文昌雞的鮮嫩，清爽健康無負擔。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=椰子雞 上海" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="hotpot_bbq">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">糟粕醋火鍋</h3>
+            <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold">火鍋燒烤</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">海南酸湯火鍋，以酒糟發酵的「糟粕醋」為湯底，酸辣開胃，適合搭配海鮮。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=糟粕醋火鍋 上海" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <!-- 各地方風味 -->
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="regional">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">新疆菜：塔哈爾</h3>
+            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">各地風味</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">手抓飯、大盤雞、烤羊肉串，充滿異域風情和濃郁香料味。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=塔哈爾新疆餐廳" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 推薦塔哈爾</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="regional">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">川菜 / 酸菜魚</h3>
+            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">各地風味</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">無辣不歡！水煮魚、毛血旺等麻辣鮮香；或是酸辣開胃的酸菜魚。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=太二酸菜魚" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 推薦太二</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="regional">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">廣/港式風味</h3>
+            <span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-xs font-semibold">各地風味</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">想念港味？煲仔飯、燒臘飯、或是菠蘿油配絲襪奶茶，輕鬆解決一餐。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=上海煲仔飯" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="regional">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">潮州海鮮粥</h3>
+            <span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-semibold">各地風味</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">廣東潮汕風味，米粒分明但軟糯，海鮮熬煮的湯頭極為鮮甜。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=潮州海鮮粥 上海" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="regional">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">地鍋雞</h3>
+            <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold">各地風味</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">江蘇徐州特色，大鍋料燉雞，最特別的是鍋邊貼滿的手工餅，沾湯汁吃。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=地鍋雞 上海" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="regional">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">雲南菌菇鍋 / 野菜</h3>
+            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">各地風味</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">健康養生之選，各種新鮮野生菌菇熬煮的清湯，鮮美至極。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=雲南菌菇火鍋 上海" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="hotpot_bbq">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">北京/東北鍋</h3>
+            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">火鍋燒烤</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">想換口味可選：老北京銅鍋涮肉或東北酸菜白肉鍋，再配一份烤鴨！</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=北京酸菜白肉鍋 上海" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <!-- 甜點飲品 -->
+
+        <!-- Chikalicious Dessert Bar -->
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="dessert">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">Chikalicious (紐約甜點吧)</h3>
+            <span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-xs font-semibold">甜點飲品</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">紐約米其林甜點吧，提供**三道式套餐**體驗，設計感強，口味獨特而精緻。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=Chikalicious+Dessert+Bar+上海" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <!-- Le Rêve -->
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="dessert">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">Le Rêve (頂級法式糕點)</h3>
+            <span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-xs font-semibold">甜點飲品</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">世界冠軍甜點師創立，藝術品般的慕斯蛋糕和馬卡龍，極致法式優雅。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=Le+Rêve+上海" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+
+        <!-- Soufflé J / 春野家 -->
+        <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="dessert">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-800">日式舒芙蕾鬆餅</h3>
+            <span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-xs font-semibold">甜點飲品</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">輕盈蓬鬆、入口即化的療癒系日式鬆餅，建議現點現做，人氣極高。</p>
+          <div class="flex justify-between items-center border-t pt-3">
+            <span class="text-amber-500 font-bold">⭐⭐⭐⭐</span>
+            <a href="https://maps.google.com/?q=上海日式舒芙蕾" target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">📍 搜索店家</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Preparation Section -->
+    <section id="preparation" class="section">
+      <h2 class="text-3xl font-extrabold mb-10 text-center text-gray-800">行前準備清單</h2>
+
+      <div class="grid lg:grid-cols-3 gap-8">
+        <!-- 文件準備 -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+          <h3 class="text-2xl font-bold mb-6 text-indigo-700 flex items-center"><span class="text-3xl mr-2">📄</span>
+            必備文件</h3>
+          <div class="space-y-4">
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-indigo-50 rounded-lg transition-colors hover:bg-indigo-100">
+              <input type="checkbox" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500">
+              <span class="text-gray-700 font-medium">台胞證</span>
+            </label>
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-indigo-50 rounded-lg transition-colors hover:bg-indigo-100">
+              <input type="checkbox" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500">
+              <span class="text-gray-700 font-medium">護照</span>
+            </label>
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-indigo-50 rounded-lg transition-colors hover:bg-indigo-100">
+              <input type="checkbox" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500">
+              <span class="text-gray-700 font-medium">旅遊保險單副本</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 金錢準備 -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+          <h3 class="text-2xl font-bold mb-6 text-amber-700 flex items-center"><span class="text-3xl mr-2">💰</span>
+            金錢準備</h3>
+          <div class="space-y-4">
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-amber-50 rounded-lg transition-colors hover:bg-amber-100">
+              <input type="checkbox" class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500">
+              <span class="text-gray-700 font-medium">換取少量人民幣現金</span>
+            </label>
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-amber-50 rounded-lg transition-colors hover:bg-amber-100">
+              <input type="checkbox" class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500">
+              <span class="text-gray-700 font-medium">開通/綁定微信支付/支付寶</span>
+            </label>
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-amber-50 rounded-lg transition-colors hover:bg-amber-100">
+              <input type="checkbox" class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500">
+              <span class="text-gray-700 font-medium">通知銀行出國行程</span>
+            </label>
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-amber-50 rounded-lg transition-colors hover:bg-amber-100">
+              <input type="checkbox" class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500">
+              <span class="text-gray-700 font-medium">信用卡</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- APP下載 -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+          <h3 class="text-2xl font-bold mb-6 text-purple-700 flex items-center"><span class="text-3xl mr-2">📱</span>
+            實用APP下載</h3>
+          <div class="space-y-4">
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-purple-50 rounded-lg transition-colors hover:bg-purple-100">
+              <input type="checkbox" class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500">
+              <span class="text-gray-700 font-medium">大眾點評（美食導航）</span>
+            </label>
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-purple-50 rounded-lg transition-colors hover:bg-purple-100">
+              <input type="checkbox" class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500">
+              <span class="text-gray-700 font-medium">Metro大都會（地鐵掃碼）</span>
+            </label>
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-purple-50 rounded-lg transition-colors hover:bg-purple-100">
+              <input type="checkbox" class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500">
+              <span class="text-gray-700 font-medium">滴滴出行（叫車必備）</span>
+            </label>
+            <label
+              class="flex items-center space-x-3 cursor-pointer p-2 bg-purple-50 rounded-lg transition-colors hover:bg-purple-100">
+              <input type="checkbox" class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500">
+              <span class="text-gray-700 font-medium">VPN（通訊/網路）</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white shadow-inner mt-12 py-6">
+    <div class="container mx-auto px-4 text-center text-sm text-gray-500">
+      <p>酸酸 & 雅璇 © 2025</p>
+    </div>
+  </footer>
+
+  <script>
+    // --- 行程數據整合 (Day 1 - Day 8) ---
+    const fullItineraryData = [
+      {
+        day: 1, date: '10/4 (五)', title: '初抵魔都：南京路巡禮與在地美食', activities: [
+          { time: '12:30', name: '台北松山機場起飛', type: '交通', detail: '前往第一航廈，準時登機。', color: 'indigo' },
+          { time: '14:15', name: '抵達上海虹橋機場 (SHA)', type: '交通', detail: '入境、取行李，搭乘地鐵前往市區酒店。', color: 'indigo' },
+          { time: '16:00', name: '雅璇家 Check-in & 休息', type: '住宿', detail: '安頓行李，準備晚上行程。', color: 'indigo' },
+          { time: '17:30', name: '南京路步行街', type: '景點/購物', detail: '逛街感受上海最繁華的商業街景。', color: 'indigo' },
+          { time: '19:30', name: '晚餐：小楊/大壺春生煎', type: '美食', detail: '必吃！嘗試底部金黃酥脆的在地生煎包。', color: 'indigo' },
+        ]
+      },
+      {
+        day: 2, date: '10/5 (六)', title: '老城區韻味：豫園 & 外灘經典', activities: [
+          { time: '10:00', name: '豫園 & 城隍廟（古色古香）', type: '景點/美食', detail: '體驗老上海的園林與古早小吃 (南翔小籠包)。', color: 'indigo' },
+          { time: '13:00', name: '午餐：南翔古鎮', type: '美食', detail: '若時間充裕可前往南翔古鎮品嚐更正宗的南翔小籠包。', color: 'indigo' },
+          { time: '16:00', name: '外灘白日漫步 (萬國建築群)', type: '景點', detail: '欣賞蘇州河口至金陵東路渡口之間的百年建築群。', color: 'indigo' },
+          { time: '18:00', name: '金陵東路渡口', type: '交通', detail: '搭乘輪船渡江至對岸，感受蘇州河/黃浦江夜景。', color: 'indigo' },
+          { time: '19:30', name: '晚餐：本幫菜老正興/德興館', type: '美食', detail: '品嚐地道的上海本幫菜，如紅燒肉。', color: 'indigo' },
+          { time: '21:00', name: '外灘夜景（魔都精髓）', type: '景點', detail: '欣賞浦東「三件套」與浦西外灘的燈光秀。', color: 'indigo' },
+        ]
+      },
+      {
+        day: 3, date: '10/6 (日)', title: '摩登與文藝：武康路 & 天安千樹', activities: [
+          { time: '10:30', name: '武康路 & 武康大樓（法租界風情）', type: '景點/戶外', detail: '沿著街區散步，享受咖啡館和文藝氣息。', color: 'indigo' },
+          { time: '13:00', name: '午餐：淮海中路商圈', type: '美食/購物', detail: '在淮海中路附近解決午餐。', color: 'indigo' },
+          { time: '15:00', name: '上海星巴克旗艦店', type: '景點/休息', detail: '參觀全球最大的星巴克旗艦店，喝杯下午茶。', color: 'indigo' },
+          { time: '18:00', name: '天安千樹', type: '景點/購物', detail: '欣賞獨特的「古巴比倫空中花園」建築設計。', color: 'indigo' },
+          { time: '19:30', name: '晚餐：天安千樹附近餐廳', type: '美食', detail: '可選擇商場內或附近的特色餐廳。', color: 'indigo' },
+        ]
+      },
+      {
+        day: 4, date: '10/7 (一)', title: '水鄉古鎮：朱家角一日漫遊', activities: [
+          { time: '09:00', name: '搭乘地鐵/交通前往朱家角', type: '交通', detail: '搭乘地鐵17號線至朱家角站，約1.5小時。', color: 'indigo' },
+          { time: '11:00', name: '朱家角古鎮景區遊覽', type: '景點/戶外', detail: '體驗水鄉的慢生活、放生橋、北大街等。', color: 'indigo' },
+          { time: '13:30', name: '午餐：古鎮特色美食', type: '美食', detail: '品嚐扎肉、臭豆腐等當地小吃。', color: 'indigo' },
+          { time: '16:00', name: '茶館休息/古鎮漫步', type: '放鬆', detail: '在河邊找個茶館，享受悠閒時光。', color: 'indigo' },
+          { time: '18:30', name: '返回市區', type: '交通', detail: '搭乘地鐵返回酒店區域。', color: 'indigo' },
+          { time: '20:00', name: '晚餐：酒店附近或思南公館', type: '美食', detail: '若體力許可，可考慮前往思南公館走走並晚餐。', color: 'indigo' },
+        ]
+      },
+      {
+        day: 5, date: '10/8 (二)', title: '文藝自然：藝術館 & 恐龍展', activities: [
+          { time: '09:30', name: '浦東美術館 (PAM)', type: '文化歷史', detail: '參觀「《締造現代》來自巴黎奧賽博物館的藝術瑰寶大展」。', color: 'indigo' },
+          { time: '12:30', name: '午餐：陸家嘴或人民廣場附近', type: '美食', detail: '午餐後準備前往自然博物館。', color: 'indigo' },
+          { time: '14:30', name: '上海自然博物館 (恐龍展)', type: '景點/戶外', detail: '參觀恐龍展廳及其他自然歷史展區。', color: 'indigo' },
+          { time: '17:30', name: '世博園騎車散步', type: '景點/戶外', detail: '前往世博園，租賃自行車散步看夜景 (喜歡戶外活動)。', color: 'indigo' },
+          { time: '19:30', name: '晚餐：世博園區附近餐廳', type: '美食', detail: '可選擇世博源商場內的餐廳。', color: 'indigo' },
+        ]
+      },
+      {
+        day: 6, date: '10/9 (三)', title: '夢幻童話：上海迪士尼樂園', activities: [
+          { time: '08:00', name: '地鐵11號線前往迪士尼', type: '交通', detail: '提早出門，準備開園衝刺！', color: 'indigo' },
+          { time: '09:00', name: '入園遊玩 (一整天)', type: '景點', detail: '使用App預約排隊，快樂滿分！', color: 'indigo' },
+          { time: '19:30', name: '晚餐：園區內或迪士尼小鎮', type: '美食', detail: '在迪士尼小鎮用餐，避開園區高峰。', color: 'indigo' },
+          { time: '20:30', name: '夜間煙火秀', type: '景點', detail: '在奇幻童話城堡前欣賞精彩的煙火秀。', color: 'indigo' }
+        ]
+      },
+      {
+        day: 7, date: '10/10 (四)', title: '世界魔都：蘇州河、外灘源、高空景觀', activities: [
+          { time: '10:00', name: '上海郵政博物館 📷', type: '文化歷史', detail: '巴洛克建築風格，順便打卡東方明珠。', color: 'indigo' },
+          { time: '12:00', name: '蘇州河散步 & 洛克外灘源', type: '景點/戶外', detail: '在蘇州河畔漫步，感受上海塞納河氛圍與百年建築街區。', color: 'indigo' },
+          { time: '13:30', name: '午餐：外灘源/南京路附近', type: '美食', detail: '在Puxi側解決午餐。', color: 'indigo' },
+          { time: '16:00', name: '陸家嘴“三件套”觀景 📷', type: '景點', detail: '前往明珠環島拍攝經典的摩天大樓群。', color: 'indigo' },
+          { time: '17:30', name: '雲朵書店-52層高空咖啡', type: '景點/放鬆', detail: '預約前往，欣賞黃昏與夜景，喝杯咖啡休息。', color: 'indigo' },
+          { time: '20:00', name: '晚餐：上海ＩＦＣ商場', type: '美食/購物', detail: '在國際金融中心商場享用晚膳。', color: 'indigo' },
+        ]
+      },
+      {
+        day: 8, date: '10/11 (五)', title: '潮流與返程：旗艦店與輕食', activities: [
+          { time: '10:00', name: '淮海中路 & 潮流旗艦店', type: '購物', detail: '閒逛淮海中路，前往**吉伊卡哇上海旗艦店**。', color: 'indigo' },
+          { time: '12:00', name: '午餐：新天地商圈或附近輕食', type: '美食/放鬆', detail: '在新天地/思南公館附近，享受最後的休閒時光。', color: 'indigo' },
+          { time: '13:30', name: '前往虹橋國際機場', type: '交通', detail: '預留充足時間，準備搭機。', color: 'indigo' },
+          { time: '16:15', name: '上海虹橋機場起飛', type: '交通', detail: '旅途愉快！', color: 'indigo' }
+        ]
+      },
+    ];
+
+    // 輔助函數：將行程顏色映射到 Tailwind 類別
+    function getColorClasses(colorName, isDot = false) {
+      switch (colorName) {
+        case 'indigo': return { bg: 'bg-gray-50', text: 'text-indigo-800', border: 'border-indigo-500', timeBg: 'bg-indigo-600' };
+        case 'amber': return { bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-500', timeBg: 'bg-amber-600' };
+        case 'orange': return { bg: 'bg-orange-50', text: 'text-orange-800', border: 'border-orange-500', timeBg: 'bg-orange-600' };
+        case 'red': return { bg: 'bg-red-50', text: 'text-red-800', border: 'border-red-500', timeBg: 'bg-red-600' };
+        case 'blue': return { bg: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-500', timeBg: 'bg-blue-600' };
+        case 'green': return { bg: 'bg-green-50', text: 'text-green-800', border: 'border-green-500', timeBg: 'bg-green-600' };
+        case 'teal': return { bg: 'bg-teal-50', text: 'text-teal-800', border: 'border-teal-500', timeBg: 'bg-teal-600' };
+        case 'purple': return { bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-500', timeBg: 'bg-purple-600' };
+        case 'pink': return { bg: 'bg-pink-50', text: 'text-pink-800', border: 'border-pink-500', timeBg: 'bg-pink-600' };
+        case 'gray':
+        default: return { bg: 'bg-gray-100', text: 'text-gray-700', border: 'border-gray-500', timeBg: 'bg-indigo-500' };
+      }
+    }
+
+    // 渲染單個行程時間軸項目
+    function renderTimelineItem(activity) {
+      const colors = getColorClasses(activity.color);
+      return `
+                <div class="timeline-item relative pb-10">
+                    <div class="timeline-dot" style="border-color: ${colors.border};"></div>
+                    <div class="ml-8 p-4 ${colors.bg} rounded-xl shadow-sm ${colors.border}">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="${colors.timeBg} text-white px-3 py-1 rounded-full text-sm font-medium">${activity.time}</span>
+                            <h4 class="font-bold text-lg text-gray-800">${activity.name}</h4>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-2">${activity.detail || activity.type}</p>
+                        <span class="bg-white text-gray-600 px-2 py-1 rounded-full text-xs shadow-sm">${activity.type}</span>
+                    </div>
+                </div>
+            `;
+    }
+
+    // 渲染單日行程內容
+    function renderDailyContent(dayPlan) {
+      let timelineHTML = '';
+      dayPlan.activities.forEach(activity => {
+        timelineHTML += renderTimelineItem(activity);
+      });
+
+      return `
+                <div id="daily-content-day-${dayPlan.day}" class="daily-content-tab card-hover bg-white rounded-2xl shadow-xl p-8 mb-10" data-day="${dayPlan.day}">
+                    <h3 class="text-2xl font-extrabold mb-6 text-indigo-700 border-b pb-2 border-indigo-100">
+                        Day ${dayPlan.day} - ${dayPlan.date}：${dayPlan.title}
+                    </h3>
+                    <div class="timeline">
+                        ${timelineHTML}
+                    </div>
+                </div>
+            `;
+    }
+
+    // 核心功能：生成 Select Options 和 Content
+    function renderDailyItinerary() {
+      const selectContainer = document.getElementById('daily-select');
+      const contentContainer = document.getElementById('daily-content');
+      selectContainer.innerHTML = '';
+      contentContainer.innerHTML = '';
+
+      fullItineraryData.forEach((dayPlan, index) => {
+        // 1. 生成 Option 選項
+        const option = document.createElement('option');
+        option.value = dayPlan.day;
+        option.textContent = `Day ${dayPlan.day} - ${dayPlan.date}：${dayPlan.title}`;
+        if (index === 0) {
+          option.selected = true; // 預設選中 Day 1
+        }
+        selectContainer.appendChild(option);
+
+        // 2. 生成 Content 區塊
+        const contentHTML = renderDailyContent(dayPlan);
+        contentContainer.insertAdjacentHTML('beforeend', contentHTML);
+
+        // 設置初始 active 狀態 (Day 1)
+        if (index === 0) {
+          document.getElementById(`daily-content-day-${dayPlan.day}`).classList.add('active');
+        }
+      });
+
+      // 3. 添加 change event listener
+      selectContainer.addEventListener('change', handleDailySelectChange);
+    }
+
+    // 處理 Select 下拉選單 change 事件
+    function handleDailySelectChange(event) {
+      const selectedDay = event.target.value;
+
+      // 隱藏所有 Content 區塊
+      document.querySelectorAll('.daily-content-tab').forEach(content => {
+        content.classList.remove('active');
+      });
+
+      // 顯示目標 Content 區塊
+      const targetContent = document.getElementById(`daily-content-day-${selectedDay}`);
+      if (targetContent) {
+        targetContent.classList.add('active');
+      }
+    }
+
+    // --- 主導航欄切換功能 ---
+    document.querySelectorAll('.nav-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          btn.classList.remove('nav-active', 'text-white');
+          btn.classList.add('text-gray-700', 'hover:bg-indigo-50');
+        });
+
+        this.classList.add('nav-active', 'text-white');
+        this.classList.remove('text-gray-700', 'hover:bg-indigo-50');
+
+        document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+
+        const targetSectionId = this.getAttribute('data-section');
+        document.getElementById(targetSectionId).classList.add('active');
+
+        // 如果切換到美食地圖，確保篩選器狀態正確
+        if (targetSectionId === 'food') {
+          // 模擬點擊「全部」按鈕
+          document.querySelector('.filter-btn[data-filter="all"]').click();
+        }
+      });
+    });
+
+
+    // --- 美食篩選功能 (更新為新分類) ---
+    document.querySelectorAll('.filter-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.classList.remove('filter-active', 'text-white');
+          btn.classList.add('border', 'hover:bg-indigo-50');
+        });
+
+        this.classList.add('filter-active', 'text-white');
+        this.classList.remove('border', 'hover:bg-indigo-50');
+
+        const filter = this.getAttribute('data-filter');
+        const cards = document.querySelectorAll('.restaurant-card');
+
+        cards.forEach(card => {
+          const category = card.getAttribute('data-category');
+          if (filter === 'all' || filter === category) {
+            card.style.display = 'block';
+            card.classList.remove('hidden');
+          } else {
+            card.style.display = 'none';
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // --- Chart.js 初始化 ---
+    function initCharts() {
+      // Daily Activity Chart (Radar)
+      new Chart(document.getElementById('dailyChart'), {
+        type: 'radar',
+        data: {
+          labels: ['景點觀光', '購物消費', '文化歷史', '美食探索', '放鬆時間', '交通移動'],
+          datasets: [{
+            label: '平均每日活動比例',
+            data: [20, 15, 10, 25, 20, 10], // 虛擬數據
+            backgroundColor: 'rgba(67, 56, 202, 0.2)', // Indigo
+            borderColor: 'rgba(67, 56, 202, 1)',
+            pointBackgroundColor: 'rgba(67, 56, 202, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(67, 56, 202, 1)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false, // <-- 關鍵: 允許圖表使用容器定義的高度
+          elements: {
+            line: { borderWidth: 2 }
+          },
+          scales: {
+            r: {
+              angleLines: { color: '#E5E7EB' },
+              grid: { color: '#E5E7EB' },
+              pointLabels: { font: { size: 12, weight: 'bold' } },
+              suggestedMin: 0, suggestedMax: 30
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+
+    }
+
+    // 頁面加載完成後執行
+    window.onload = function () {
+      initCharts();
+      renderDailyItinerary(); // 初始化行程 Select 和內容
+
+      // 確保美食區塊的初始篩選器為「全部」
+      document.querySelector('.filter-btn[data-filter="all"]').click();
+    };
+  </script>
+</body>
+
+</html>
