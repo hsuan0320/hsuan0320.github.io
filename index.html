@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Have a Nice Trip</title>
+  <title>酸酸 & 雅璇的青春小旅行</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- 使用 Inter 字體 -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
@@ -161,7 +161,7 @@
     <div class="container mx-auto px-4">
       <!-- 固定較小的字級 -->
       <h1 id="main-title" class="text-xl sm:text-2xl font-extrabold text-center tracking-tight">
-        ✨ Have a Nice Trip ✨
+        ✨酸酸 & 雅璇的青春小旅行✨
       </h1>
       <!-- 副標題 -->
       <p id="sub-title" class="text-center text-indigo-100 mt-1 text-sm sm:text-base">
@@ -330,7 +330,7 @@
 
     <!-- Daily Itinerary Section (改為 Select 下拉選單 UI) -->
     <section id="daily" class="section">
-      <h2 class="text-3xl font-extrabold mb-8 text-center text-gray-800">每日詳細行程時間軸</h2>
+      <h2 class="text-3xl font-extrabold mb-8 text-center text-gray-800">每日行程時間軸</h2>
 
       <!-- Tab Buttons Container (替換為 Select 下拉選單) -->
       <div class="mb-8 flex justify-center">
@@ -659,7 +659,7 @@
         <!-- Le Rêve -->
         <div class="restaurant-card bg-white rounded-2xl shadow-lg p-5 card-hover" data-category="dessert">
           <div class="flex items-center justify-between mb-3">
-            <h3 class="text-xl font-bold text-gray-800">Le Rêve (頂級法式糕點)</h3>
+            <h3 class="text-xl font-bold text-gray-800">Le Rêve (外滩店)</h3>
             <span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-xs font-semibold">甜點飲品</span>
           </div>
           <p class="text-gray-600 text-sm mb-4">世界冠軍甜點師創立，藝術品般的慕斯蛋糕和馬卡龍，極致法式優雅。</p>
@@ -784,7 +784,7 @@
     // --- 行程數據整合 (Day 1 - Day 8) ---
     const fullItineraryData = [
       {
-        day: 1, date: '10/4 (五)', title: '初抵魔都：南京路巡禮與在地美食', activities: [
+        day: 1, date: '10/4 (五)', title: '南京路與在地美食', activities: [
           { time: '12:30', name: '台北松山機場起飛', type: '交通', detail: '前往第一航廈，準時登機。', color: 'indigo' },
           { time: '14:15', name: '抵達上海虹橋機場 (SHA)', type: '交通', detail: '入境、取行李，搭乘地鐵前往市區酒店。', color: 'indigo' },
           { time: '16:00', name: '雅璇家 Check-in & 休息', type: '住宿', detail: '安頓行李，準備晚上行程。', color: 'indigo' },
@@ -793,7 +793,7 @@
         ]
       },
       {
-        day: 2, date: '10/5 (六)', title: '老城區韻味：豫園 & 外灘經典', activities: [
+        day: 2, date: '10/5 (六)', title: '豫園 & 外灘經典', activities: [
           { time: '10:00', name: '豫園 & 城隍廟（古色古香）', type: '景點/美食', detail: '體驗老上海的園林與古早小吃 (南翔小籠包)。', color: 'indigo' },
           { time: '13:00', name: '午餐：南翔古鎮', type: '美食', detail: '若時間充裕可前往南翔古鎮品嚐更正宗的南翔小籠包。', color: 'indigo' },
           { time: '16:00', name: '外灘白日漫步 (萬國建築群)', type: '景點', detail: '欣賞蘇州河口至金陵東路渡口之間的百年建築群。', color: 'indigo' },
@@ -803,26 +803,29 @@
         ]
       },
       {
-        day: 3, date: '10/6 (日)', title: '摩登與文藝：武康路 & 天安千樹', activities: [
+        day: 3, date: '10/6 (日)', title: '武康路 & 天安千樹', activities: [
           { time: '10:30', name: '武康路 & 武康大樓（法租界風情）', type: '景點/戶外', detail: '沿著街區散步，享受咖啡館和文藝氣息。', color: 'indigo' },
           { time: '13:00', name: '午餐：淮海中路商圈', type: '美食/購物', detail: '在淮海中路附近解決午餐。', color: 'indigo' },
-          { time: '15:00', name: '上海星巴克旗艦店', type: '景點/休息', detail: '參觀全球最大的星巴克旗艦店，喝杯下午茶。', color: 'indigo' },
+          { time: '15:00', name: '上海星巴克旗艦店', type: '景點/休息', detail: '參觀全球最大旗艦店。', color: 'indigo' },
+          { time: '16:00', name: '靜安寺 & 靜安公園', type: '景點/休息', detail: '參觀鬧市中的千年古剎與旁邊的城市綠肺。', color: 'indigo' },
+          { time: '17:00', name: '法式下午茶：Le Rêve 或 Chikalicious', type: '美食', detail: '在靜安/淮海路商圈享受法式甜點。', color: 'indigo' },
+
           { time: '18:00', name: '天安千樹', type: '景點/購物', detail: '欣賞獨特的「古巴比倫空中花園」建築設計。', color: 'indigo' },
           { time: '19:30', name: '晚餐：天安千樹附近餐廳', type: '美食', detail: '可選擇商場內或附近的特色餐廳。', color: 'indigo' },
         ]
       },
       {
-        day: 4, date: '10/7 (一)', title: '水鄉古鎮：朱家角一日漫遊', activities: [
+        day: 4, date: '10/7 (一)', title: '朱家角古鎮', activities: [
           { time: '09:00', name: '搭乘地鐵/交通前往朱家角', type: '交通', detail: '搭乘地鐵17號線至朱家角站，約1.5小時。', color: 'indigo' },
           { time: '11:00', name: '朱家角古鎮景區遊覽', type: '景點/戶外', detail: '體驗水鄉的慢生活、放生橋、北大街等。', color: 'indigo' },
           { time: '13:30', name: '午餐：古鎮特色美食', type: '美食', detail: '品嚐扎肉、臭豆腐等當地小吃。', color: 'indigo' },
-          { time: '16:00', name: '茶館休息/古鎮漫步', type: '放鬆', detail: '在河邊找個茶館，享受悠閒時光。', color: 'indigo' },
+          { time: '16:00', name: '茶館休息/古鎮漫步', type: '放鬆', detail: '在河邊找個茶館或是回市區品嚐舒芙蕾鬆餅，享受悠閒時光。', color: 'indigo' },
           { time: '18:30', name: '返回市區', type: '交通', detail: '搭乘地鐵返回酒店區域。', color: 'indigo' },
           { time: '20:00', name: '晚餐：酒店附近或思南公館', type: '美食', detail: '若體力許可，可考慮前往思南公館走走並晚餐。', color: 'indigo' },
         ]
       },
       {
-        day: 5, date: '10/8 (二)', title: '文藝自然：藝術館 & 恐龍展', activities: [
+        day: 5, date: '10/8 (二)', title: '藝術館 & 恐龍展', activities: [
           { time: '09:30', name: '浦東美術館 (PAM)', type: '文化歷史', detail: '參觀「《締造現代》來自巴黎奧賽博物館的藝術瑰寶大展」。', color: 'indigo' },
           { time: '12:30', name: '午餐：陸家嘴或人民廣場附近', type: '美食', detail: '午餐後準備前往自然博物館。', color: 'indigo' },
           { time: '14:30', name: '上海自然博物館 (恐龍展)', type: '景點/戶外', detail: '參觀恐龍展廳及其他自然歷史展區。', color: 'indigo' },
@@ -831,7 +834,7 @@
         ]
       },
       {
-        day: 6, date: '10/9 (三)', title: '夢幻童話：上海迪士尼樂園', activities: [
+        day: 6, date: '10/9 (三)', title: '上海迪士尼樂園', activities: [
           { time: '08:00', name: '地鐵11號線前往迪士尼', type: '交通', detail: '提早出門，準備開園衝刺！', color: 'indigo' },
           { time: '09:00', name: '入園遊玩 (一整天)', type: '景點', detail: '使用App預約排隊，快樂滿分！', color: 'indigo' },
           { time: '19:30', name: '晚餐：園區內或迪士尼小鎮', type: '美食', detail: '在迪士尼小鎮用餐，避開園區高峰。', color: 'indigo' },
@@ -839,7 +842,7 @@
         ]
       },
       {
-        day: 7, date: '10/10 (四)', title: '世界魔都：蘇州河、外灘源、高空景觀', activities: [
+        day: 7, date: '10/10 (四)', title: '世界魔都：蘇州河、外灘源', activities: [
           { time: '10:00', name: '上海郵政博物館 📷', type: '文化歷史', detail: '巴洛克建築風格，順便打卡東方明珠。', color: 'indigo' },
           { time: '12:00', name: '蘇州河散步 & 洛克外灘源', type: '景點/戶外', detail: '在蘇州河畔漫步，感受上海塞納河氛圍與百年建築街區。', color: 'indigo' },
           { time: '13:30', name: '午餐：外灘源/南京路附近', type: '美食', detail: '在Puxi側解決午餐。', color: 'indigo' },
@@ -849,7 +852,7 @@
         ]
       },
       {
-        day: 8, date: '10/11 (五)', title: '潮流與返程：旗艦店與輕食', activities: [
+        day: 8, date: '10/11 (五)', title: '逛街與輕食', activities: [
           { time: '10:00', name: '淮海中路 & 潮流旗艦店', type: '購物', detail: '閒逛淮海中路，前往**吉伊卡哇上海旗艦店**。', color: 'indigo' },
           { time: '12:00', name: '午餐：新天地商圈或附近輕食', type: '美食/放鬆', detail: '在新天地/思南公館附近，享受最後的休閒時光。', color: 'indigo' },
           { time: '13:30', name: '前往虹橋國際機場', type: '交通', detail: '預留充足時間，準備搭機。', color: 'indigo' },
@@ -881,8 +884,8 @@
       return `
                 <div class="timeline-item relative pb-10">
                     <div class="timeline-dot" style="border-color: ${colors.border};"></div>
-                    <div class="ml-8 p-4 ${colors.bg} rounded-xl shadow-sm ${colors.border}">
-                        <div class="flex items-center gap-3 mb-2">
+                    <div class="ml-5 p-4 ${colors.bg} rounded-xl shadow-sm ${colors.border}">
+                        <div class="flex flex-wrap items-center gap-3 mb-2">
                             <span class="${colors.timeBg} text-white px-3 py-1 rounded-full text-sm font-medium">${activity.time}</span>
                             <h4 class="font-bold text-lg text-gray-800">${activity.name}</h4>
                         </div>
@@ -923,7 +926,7 @@
         // 1. 生成 Option 選項
         const option = document.createElement('option');
         option.value = dayPlan.day;
-        option.textContent = `Day ${dayPlan.day} - ${dayPlan.date}：${dayPlan.title}`;
+        option.textContent = `${dayPlan.date}：${dayPlan.title}`;
         if (index === 0) {
           option.selected = true; // 預設選中 Day 1
         }
